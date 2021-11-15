@@ -36,7 +36,7 @@ def run_console(lst_cheltuieli):
                         if data is None:
                             raise ValueError('Nu ati introdus corect data! ')
                         tipul = command[5]
-                        lst_cheltuieli = create(lst_cheltuieli, id_cheltuiala, nr_apartament, suma, data, tipul)
+                        lst_cheltuieli = create(lst_cheltuieli, id_cheltuiala, nr_apartament, suma, data, tipul, [], [])
                     except ValueError as ve:
                         print(f'Eroare: {ve}')
                 else:
@@ -47,7 +47,7 @@ def run_console(lst_cheltuieli):
             elif command[0] == 'delete':
                 if len(command) == 2:
                     id_cheltuiala = command[1]
-                    lst_cheltuieli = delete(lst_cheltuieli, id_cheltuiala)
+                    lst_cheltuieli = delete(lst_cheltuieli, id_cheltuiala, [], [])
                 else:
                     print('Nu ati introdus numarul cirect de parametri pentru stergere!')
             else:

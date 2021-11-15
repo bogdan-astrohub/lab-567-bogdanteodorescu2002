@@ -31,36 +31,36 @@ def read_date():
     return datetime.date(year, month, day)
 
 
-def handle_add(cheltuieli):
+def handle_add(cheltuieli, undo_list, redo_list):
     try:
         id_cheltuiala = int(input('Dati id-ul cheltuielii: '))
         nr_apartament = int(input('Dati numarul apartamentului: '))
         suma = float(input('Dati suma ce trebuie cheltuita: '))
         date = read_date()
         tip = input('Dati tipul: ')
-        return create(cheltuieli, id_cheltuiala, nr_apartament, suma, date, tip)
+        return create(cheltuieli, id_cheltuiala, nr_apartament, suma, date, tip, undo_list, redo_list)
     except ValueError as ve:
         print('Eroare: ', ve)
     return cheltuieli
 
 
-def handle_modify(cheltuieli):
+def handle_modify(cheltuieli, undo_list, redo_list):
     try:
         id_cheltuiala = int(input('Dati id-ul cheltuielii ce trebuie modificata: '))
         nr_apartament = int(input('Dati numarul noului apartament: '))
         suma = float(input('Dati noua suma: '))
         data = read_date()
         tip = input('Dati noul tip: ')
-        return update(cheltuieli, id_cheltuiala, nr_apartament, suma, data, tip)
+        return update(cheltuieli, id_cheltuiala, nr_apartament, suma, data, tip, undo_list, redo_list)
     except ValueError as ve:
         print('Eroare: ', ve)
     return cheltuieli
 
 
-def handle_delete(cheltuieli):
+def handle_delete(cheltuieli, undo_list, redo_list):
     try:
         id_cheltuiala = int(input('Dati id-ul cheltuielii ce se a sterge: '))
-        cheltuieli = delete(cheltuieli, id_cheltuiala)
+        cheltuieli = delete(cheltuieli, id_cheltuiala, undo_list, redo_list)
         print('Stergerea a fost efectuata cu succes!')
         return cheltuieli
     except ValueError as ve:
@@ -82,25 +82,25 @@ def handle_show_details(cheltuieli):
     print(f'Tipul cheltuielii este: {get_tipul(chelt)}')
 
 
-def delete_all_costs(cheltuieli):
+def delete_all_costs(cheltuieli, undo_list, redo_list):
     try:
         nr_ap = int(input('Dati numarul apartamentului caruia i se vor sterge cheltuielile: '))
-        return delete_all_costs_for_apartement(cheltuieli, nr_ap)
+        return delete_all_costs_for_apartement(cheltuieli, nr_ap, undo_list, redo_list)
     except ValueError as ve:
-        print('Eroare:  {ve}')
+        print('Eroare: ', ve)
     return cheltuieli
 
 
-def add_sum_to_date(cheltuieli):
+def add_sum_to_date(cheltuieli, undo_list, redo_list):
     try:
         data = read_date()
         if data is None:
             raise ValueError("Data nu a fost introdusa corespunzator")
         valoare = float(input('Dati valoarea ce trebuie adunata: '))
-        cheltuieli = add_sum_to_all_expense_by_date(cheltuieli, data, valoare)
+        cheltuieli = add_sum_to_all_expense_by_date(cheltuieli, data, valoare, undo_list, redo_list)
         return cheltuieli
     except ValueError as ve:
-        print('Eroare:  {ve}')
+        print('Eroare: ', ve)
     return cheltuieli
 
 
@@ -110,8 +110,8 @@ def get_biggest_expense(cheltuieli):
         print(f'Tipul {tipul} are suma maxima {result[tipul]}. ')
 
 
-def get_ordering_descending_by_amount(cheltuieli):
-    handle_show_all(ordering_expenses_descending_by_amount(cheltuieli))
+def get_ordering_descending_by_amount(cheltuieli, undo_list, redo_list):
+    handle_show_all(ordering_expenses_descending_by_amount(cheltuieli, undo_list, redo_list))
 
 
 def get_monthly_sum(cheltuieli):
@@ -120,20 +120,20 @@ def get_monthly_sum(cheltuieli):
 
 
 def handle_undo(cheltuieli, undo_list, redo_list):
-    undo_result = do_undo(undo_list, redo_list)
+    undo_result = do_undo(undo_list, redo_list, cheltuieli)
     if undo_result is not None:
         return undo_result
     return cheltuieli
 
 
 def handle_redo(cheltuieli, undo_list, redo_list):
-    redo_result = do_redo(undo_list, redo_list)
+    redo_result = do_redo(undo_list, redo_list, cheltuieli)
     if redo_result is not None:
         return redo_result
     return cheltuieli
 
 
-def handle_crud(cheltuieli):
+def handle_crud(cheltuieli, undo_list, redo_list):
     while True:
         print('1. Adaugare cheltuiala')
         print('2. Modificare cheltuiala')
@@ -144,11 +144,11 @@ def handle_crud(cheltuieli):
 
         optiune = input('Alegeti optiunea: ')
         if optiune == '1':
-            cheltuieli = handle_add(cheltuieli)
+            cheltuieli = handle_add(cheltuieli, undo_list, redo_list)
         elif optiune == '2':
-            cheltuieli = handle_modify(cheltuieli)
+            cheltuieli = handle_modify(cheltuieli, undo_list, redo_list)
         elif optiune == '3':
-            cheltuieli = handle_delete(cheltuieli)
+            cheltuieli = handle_delete(cheltuieli, undo_list, redo_list)
         elif optiune == 'a':
             handle_show_all(cheltuieli)
         elif optiune == 'd':
@@ -160,23 +160,27 @@ def handle_crud(cheltuieli):
     return cheltuieli
 
 
-def run_ui(cheltuieli):
+def run_ui(cheltuieli, undo_list, redo_list):
     while True:
         show_menu()
         optiune = input('Alegeti o optiune: ')
         print()
         if optiune == '1':
-            cheltuieli = handle_crud(cheltuieli)
+            cheltuieli = handle_crud(cheltuieli, undo_list, redo_list)
         elif optiune == '2':
-            cheltuieli = delete_all_costs(cheltuieli)
+            cheltuieli = delete_all_costs(cheltuieli, undo_list, redo_list)
         elif optiune == '3':
-            cheltuieli = add_sum_to_date(cheltuieli)
+            cheltuieli = add_sum_to_date(cheltuieli, undo_list, redo_list)
         elif optiune == '4':
             get_biggest_expense(cheltuieli)
         elif optiune == '5':
-            get_ordering_descending_by_amount(cheltuieli)
+            get_ordering_descending_by_amount(cheltuieli, undo_list, redo_list)
         elif optiune == '6':
             get_monthly_sum(cheltuieli)
+        elif optiune == 'u':
+            cheltuieli = handle_undo(cheltuieli, undo_list, redo_list)
+        elif optiune == 'r':
+            cheltuieli = handle_redo(cheltuieli, undo_list, redo_list)
         elif optiune == 'x':
             break
         else:

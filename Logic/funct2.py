@@ -1,7 +1,7 @@
 from Domain.cheltuiala import get_data, creeaza_cheltuiala, get_id_cheltuiala, get_nr_apartament, get_suma, get_tipul
 
 
-def add_sum_to_all_expense_by_date(lst_cheltuieli, data, valoare):
+def add_sum_to_all_expense_by_date(lst_cheltuieli, data, valoare, undo_list, redo_list):
     """
     Aduna o valoare la toate cheltuielile dintr-o data ctita.
     :param lst_cheltuieli: Lista de cheltuieli.
@@ -24,4 +24,6 @@ def add_sum_to_all_expense_by_date(lst_cheltuieli, data, valoare):
             new_lst.append(cheltuiala_noua)
         else:
             new_lst.append(cheltuiala)
+    undo_list.append(lst_cheltuieli)
+    redo_list.clear()
     return new_lst

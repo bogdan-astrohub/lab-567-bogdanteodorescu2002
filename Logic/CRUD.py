@@ -1,20 +1,22 @@
 from Domain.cheltuiala import creeaza_cheltuiala, get_id_cheltuiala, get_nr_apartament
 
 
-def create(lst_cheltuieli, id_cheltuiala, nr_apartament, suma, data, tipul):
+def create(lst_cheltuieli, id_cheltuiala, nr_apartament, suma, data, tipul, undo_list: list, redo_list: list):
     """
     Adauga o cheltuiala.
     :param lst_cheltuieli: Lista de cheltuieli.
     :param id_cheltuiala: Id-ul cheltuielii.
     :param nr_apartament: Numar partament.
     :param suma: Suma.
-    :param data: Data
-    :param tipul: Tipul
+    :param data: Data.
+    :param tipul: Tipul.
     :return: O noua lista formata din lst_cheltuieli si noua cheltuiala adaugata.
     """
     if read(lst_cheltuieli, id_cheltuiala) is not None:
         raise ValueError(f'Exista deja o cheltuiala cu id-ul {id_cheltuiala}')
     cheltuiala = creeaza_cheltuiala(id_cheltuiala, nr_apartament, suma, data, tipul)
+    undo_list.append(lst_cheltuieli)
+    redo_list.clear()
     return lst_cheltuieli + [cheltuiala]
 
 
@@ -36,7 +38,7 @@ def read(lst_cheltuieli, id_cheltuiala: int = None):
     return None
 
 
-def read_by_nr_apartament(lst_cheltuieli, nr_apartament):
+def read_by_nr_apartament(lst_cheltuieli, nr_apartament, undo_list: list, redo_list: list):
     """
     Citeste o cheltuiala din "baza de date" dupa numarul apartamentului.
     :param lst_cheltuieli: Lista de cheltuieli.
@@ -46,10 +48,12 @@ def read_by_nr_apartament(lst_cheltuieli, nr_apartament):
     for cheltuiala in lst_cheltuieli:
         if get_nr_apartament(cheltuiala) == nr_apartament:
             return cheltuiala
+    undo_list.append(lst_cheltuieli)
+    redo_list.clear()
     return None
 
 
-def update(lst_cheltuieli, id_cheltuiala, nr_apartament, suma, data, tipul):
+def update(lst_cheltuieli, id_cheltuiala, nr_apartament, suma, data, tipul, undo_list: list, redo_list: list):
     """
     Actualizeaza o cheltuiala.
     :param lst_cheltuieli: Lista de cheltuieli.
@@ -69,10 +73,12 @@ def update(lst_cheltuieli, id_cheltuiala, nr_apartament, suma, data, tipul):
             new_list.append(cheltuiala_noua)
         else:
             new_list.append(cheltuiala)
+    undo_list.append(lst_cheltuieli)
+    redo_list.clear()
     return new_list
 
 
-def delete(lst_cheltuieli, id_cheltuiala):
+def delete(lst_cheltuieli, id_cheltuiala, undo_list: list, redo_list: list):
     """
     Sterge o cheltuiala din "baza de date".
     :param lst_cheltuieli: O lista de cheltuieli.
@@ -85,4 +91,6 @@ def delete(lst_cheltuieli, id_cheltuiala):
     for cheltuiala in lst_cheltuieli:
         if get_id_cheltuiala(cheltuiala) != id_cheltuiala:
             new_list.append(cheltuiala)
+    undo_list.append(lst_cheltuieli)
+    redo_list.clear()
     return new_list

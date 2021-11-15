@@ -4,7 +4,7 @@ from Domain.cheltuiala import get_tipul, get_suma
 def the_biggest_expense_for_every_type(lst_cheltuieli):
     """
     Determinarea celei mai mari cheltuieli pentru fiecare tip de cheltuială.
-    :param lst_cheltuilei: Lista de cheltuieli.
+    :param lst_cheltuieli: Lista de cheltuieli.
     :return: Cele mai mari cheltuieli pentru fiecare tip de cheltuiala.
     """
     result = {}
