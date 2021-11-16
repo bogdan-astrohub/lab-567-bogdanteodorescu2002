@@ -7,5 +7,5 @@ def testCheltuiala():
     assert get_id_cheltuiala(cheltuiala) == 1
     assert get_nr_apartament(cheltuiala) == 103
     assert get_suma(cheltuiala) == 200
-    assert get_data(cheltuiala) == "2019-10-28"
+    assert get_data(cheltuiala) == "28.10.2002"
     assert get_tipul(cheltuiala) == "intretinere"
